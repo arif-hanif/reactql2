@@ -14,9 +14,6 @@ import { Route, Switch } from "react-router-dom";
 // Styles - import for side-effects
 import "@/global/styles";
 
-// Components
-import ScrollTop from "@/components/helpers/scrollTop";
-
 // Routes
 import routes from "@/data/routes";
 
@@ -27,13 +24,11 @@ const Root = () => (
     <Helmet>
       <title>ReactQL starter kit - edit me!</title>
     </Helmet>
-    <ScrollTop>
       <Switch>
         {routes.map(route => (
           <Route key={route.path} {...route} />
         ))}
       </Switch>
-    </ScrollTop>
   </div>
 );
 

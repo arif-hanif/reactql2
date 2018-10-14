@@ -3,7 +3,7 @@
 // Load env vars, for the `GRAPHQL` endpoint and anything else we need
 require("dotenv").config();
 
-// Catch CTRL/CMD+C interrupts cleanly
+// Catch CTRL/CMD+C interrupts cleanly https://nodejs.org/api/process.html#process_signal_events
 process.on("SIGINT", () => {
   process.exit();
 });

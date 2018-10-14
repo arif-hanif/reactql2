@@ -1,4 +1,5 @@
 // Apollo GraphQL client
+/* global localStorage */
 
 // ----------------------------------------------------------------------------
 // IMPORTS
@@ -13,10 +14,17 @@ import { WebSocketLink } from "apollo-link-ws";
 import { getMainDefinition } from "apollo-utilities";
 import { SubscriptionClient } from "subscriptions-transport-ws";
 
+import { persistCache } from "apollo-cache-persist";
 /* Local */
 import createState from "./state";
-
 // ----------------------------------------------------------------------------
+
+const cache = new InMemoryCache();
+
+persistCache({
+  cache,
+  storage: window.localStorage,
+});
 
 export function createClient(): ApolloClient<NormalizedCacheObject> {
 
@@ -25,7 +33,6 @@ export function createClient(): ApolloClient<NormalizedCacheObject> {
   // universally, the cache will survive until the HTTP request is
   // responded to (on the server) or for the whole of the user's visit (in
   // the browser)
-  const cache = new InMemoryCache();
 
   // Create a HTTP client (both server/client). It takes the GraphQL
   // server from the `GRAPHQL` environment variable, which by default is
@@ -37,9 +44,9 @@ export function createClient(): ApolloClient<NormalizedCacheObject> {
 
   // If we're in the browser, we'd have received initial state from the
   // server. Restore it, so the client app can continue with the same data.
-  if (!SERVER) {
-    cache.restore((window as any).__APOLLO_STATE__);
-  }
+  //if (!SERVER) {
+  //  cache.restore((window as any).__APOLLO_STATE__);
+  //}
 
   // Return a new Apollo Client back, with the cache we've just created,
   // and an array of 'links' (Apollo parlance for GraphQL middleware)

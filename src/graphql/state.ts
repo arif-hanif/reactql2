@@ -7,7 +7,7 @@
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloLink } from "apollo-link";
 import { ClientStateConfig, withClientState } from "apollo-link-state";
-
+import produce from "immer";
 /* Local */
 
 // Queries
@@ -20,6 +20,7 @@ import getCountQuery from "@/queries/getCount";
 /* STATE */
 export interface IState {
   count: number;
+  test: string;
 }
 
 // 'Root', which contains the 'State' key
@@ -41,6 +42,12 @@ export default function createState(cache: InMemoryCache): ApolloLink {
 
   const opt: ClientStateConfig = {
     cache,
+    defaults : {
+      state: {
+        __typename: "State",
+        count: 0,
+      },
+    },
     resolvers: {
       Mutation: {
 
@@ -55,28 +62,20 @@ export default function createState(cache: InMemoryCache): ApolloLink {
           // key on the state we retrieved. We use this immutable pattern
           // so Apollo can see that we have a brand new object to write
           // to the cache
-          const newState = {
-            ...state,
-            count: state.count + 1,
-          };
+
+          const nextState = produce(state, draft => {draft.count = state.count + 1; });
 
           // Write the new count var to the cache
-          writeState(newState);
+          writeState(nextState);
 
           // ... and return it back to the calling function, which will
           // then become our response data
-          return newState;
+          return nextState;
         },
       },
     },
   };
 
-  opt.defaults = {
-    state: {
-      __typename: "State",
-      count: 0,
-    },
-  } as IRoot;
 
   return withClientState(opt);
 }
